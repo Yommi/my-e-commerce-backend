@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const userRouter = require('./routes/userRoutes')
+const errorController = require('./controllers/errorController')
 
 const app = express()
 
@@ -14,5 +15,7 @@ app.use(express.json())
 
 // ROUTE MOUNTING
 app.use('/api/v1/users', userRouter)
+
+app.use(errorController)
 
 module.exports = app
