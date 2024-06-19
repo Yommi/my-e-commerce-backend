@@ -5,8 +5,10 @@ exports.createOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
 
-    res.status(200).json({
-      status: 'success',
+    if (doc.password) doc.password = undefined;
+
+    res.status(201).json({
+      status: 'created',
       data: {
         doc,
       },
@@ -47,7 +49,10 @@ exports.getAll = (Model) => {
 
 exports.updateOne = (Model) => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body);
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!doc) {
       return next(new AppError('There is no document with that id', 404));
@@ -64,13 +69,13 @@ exports.updateOne = (Model) => {
 
 exports.deleteOne = (Model) => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelte(req.params.id);
+    const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
       return next(new AppError('There is no document with that id', 404));
     }
 
-    res.status(200).json({
+    res.status(204).json({
       status: 'success',
       data: null,
     });

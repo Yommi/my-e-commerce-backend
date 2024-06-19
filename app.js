@@ -1,21 +1,21 @@
-const express = require('express')
-const morgan = require('morgan')
-const userRouter = require('./routes/userRoutes')
-const errorController = require('./controllers/errorController')
+const express = require('express');
+const morgan = require('morgan');
+const userRoutes = require('./routes/userRoutes');
+const errorController = require('./controllers/errorController');
 
-const app = express()
+const app = express();
 
 // MORGAN LOGGING
 if (process.env.NODE_ENV === 'development') {
-app.use(morgan('dev'))
+  app.use(morgan('dev'));
 }
 
 // BODY PARSER
-app.use(express.json())
+app.use(express.json());
 
 // ROUTE MOUNTING
-app.use('/api/v1/users', userRouter)
+app.use('/api/v1/users', userRoutes);
 
-app.use(errorController)
+app.use(errorController);
 
-module.exports = app
+module.exports = app;

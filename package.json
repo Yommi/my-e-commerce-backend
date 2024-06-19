@@ -10,8 +10,11 @@
   "author": "Yomi Adeyemo",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "morgan": "^1.10.0"
+    "mongoose": "^8.4.1",
+    "morgan": "^1.10.0",
+    "validator": "^13.12.0"
   }
 }
