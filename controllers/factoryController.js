@@ -1,18 +1,12 @@
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const { createAndSendtoken } = require('./../controllers/authController');
 
 exports.createOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
 
-    if (doc.password) doc.password = undefined;
-
-    res.status(201).json({
-      status: 'created',
-      data: {
-        doc,
-      },
-    });
+    createAndSendtoken(doc, 201, res);
   });
 };
 

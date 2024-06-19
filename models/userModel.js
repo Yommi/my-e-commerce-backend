@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords do not match',
     },
   },
+  role: {
+    type: String,
+    default: 'user',
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -40,6 +44,13 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
+userSchema.methods.verifyPassword = async function (
+  unencryptedPassword,
+  encryptedpassword
+) {
+  return await bcrypt.compare(unencryptedPassword, encryptedpassword);
+};
 
 const User = new mongoose.model('User', userSchema);
 
