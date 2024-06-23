@@ -1,6 +1,7 @@
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const { createAndSendtoken } = require('./../controllers/authController');
+const User = require('./../models/userModel');
 
 exports.createOne = (Model) => {
   return catchAsync(async (req, res, next) => {
@@ -43,6 +44,14 @@ exports.getAll = (Model) => {
 
 exports.updateOne = (Model) => {
   return catchAsync(async (req, res, next) => {
+    if (req.body.password || req.body.passwordConfirm) {
+      return next(
+        new AppError(
+          `This route cannot update passwords, use: api/v1/users/updatePassword instead`
+        )
+      );
+    }
+
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
