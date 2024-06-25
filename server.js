@@ -6,10 +6,10 @@ console.log(`NODE ENVIRONMENT: ${process.env.NODE_ENV}`);
 
 const app = require('./app');
 
-const db = process.env.DB.replace(
-  '<username>',
-  process.env.DB_USERNAME
-).replace('<password>', process.env.DB_PASSWORD);
+const db = process.env.DB.replace('<username>', process.env.DB_USERNAME).replace(
+  '<password>',
+  process.env.DB_PASSWORD
+);
 
 mongoose.connect(db).then(() => {
   console.log('Database Connected ✅');

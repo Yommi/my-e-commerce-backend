@@ -28,7 +28,18 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'user',
+    default: 'customer',
+    enum: ['customer', 'vendor', 'admin'],
+  },
+  brandName: {
+    type: String,
+    required: [
+      function () {
+        return this.role === 'vendor';
+      },
+      'A vendor must have a brand name',
+    ],
+    unique: true,
   },
   createdAt: {
     type: Date,
@@ -58,10 +69,7 @@ userSchema.methods.verifyPassword = async function (
 
 userSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
   if (this.passwordChangedAt) {
-    const passwordChangeTime = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
+    const passwordChangeTime = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 
     return passwordChangeTime > jwtTimeStamp;
   }

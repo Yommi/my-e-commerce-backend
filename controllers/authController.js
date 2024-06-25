@@ -26,15 +26,32 @@ const createAndSendtoken = (doc, statusCode, res) => {
 
 exports.createAndSendtoken = createAndSendtoken;
 
-exports.signup = catchAsync(async (req, res, next) => {
+exports.signupAdmin = catchAsync(async (req, res, next) => {
+  req.body.role = 'admin';
+
+  const doc = await User.create(req.body);
+
+  createAndSendtoken(doc, 201, res);
+});
+
+exports.signupCustomer = catchAsync(async (req, res, next) => {
   if (req.body.role === 'admin') {
-    return next(
-      new AppError(
-        'You are only allowed to set role to user ("role" : "user")!',
-        401
-      )
-    );
+    return next(new AppError('You cannot set user role!', 401));
   }
+
+  req.body.role = 'customer';
+
+  const doc = await User.create(req.body);
+
+  createAndSendtoken(doc, 201, res);
+});
+
+exports.signupVendor = catchAsync(async (req, res, next) => {
+  if (req.body.role === 'admin') {
+    return next(new AppError('You cannot set user role!', 401));
+  }
+
+  req.body.role = 'vendor';
 
   const doc = await User.create(req.body);
 

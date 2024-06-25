@@ -4,7 +4,9 @@ const authController = require('./../controllers/authController');
 
 const router = express.Router();
 
-router.route('/signup').post(authController.signup);
+router.route('/signupAdmin').post(authController.signupAdmin);
+router.route('/signupCustomer').post(authController.signupCustomer);
+router.route('/signupVendor').post(authController.signupVendor);
 router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:token').patch(authController.resetPassword);
