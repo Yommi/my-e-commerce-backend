@@ -17,6 +17,18 @@ const productSchema = new mongoose.Schema({
   },
   quantity: {
     type: Number,
+    required: [true, 'A product must have the total number of stock avaliable'],
+  },
+  avalability: {
+    type: Boolean,
+    default: function () {
+      if (this.quantity > 0) return true;
+      else return false;
+    },
+  },
+  images: {
+    type: String,
+    required: [true, 'A product must have an image'],
   },
   vendor: {
     type: mongoose.Schema.ObjectId,

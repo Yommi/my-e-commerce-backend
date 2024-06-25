@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
 const errorController = require('./controllers/errorController');
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // ROUTE MOUNTING
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/products', productRoutes);
 
 app.use(errorController);
 
