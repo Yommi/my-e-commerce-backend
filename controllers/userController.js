@@ -4,7 +4,7 @@ const AppError = require('./../utils/appError');
 
 exports.createUser = factory.createOne(User);
 
-exports.getUser = factory.getOne(User);
+exports.getUser = factory.getOne(User, { path: 'products' });
 
 exports.getAllUsers = factory.getAll(User);
 

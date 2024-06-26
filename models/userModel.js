@@ -3,51 +3,63 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, 'A user must have an email address'],
-    validate: [validator.isEmail, 'invalid email address'],
-    unique: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: [true, 'A user must have a password'],
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'A user must confirm their password'],
-    validate: {
-      validator: function (pass) {
-        return pass === this.password;
-      },
-      message: 'Passwords do not match',
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: [true, 'A user must have an email address'],
+      validate: [validator.isEmail, 'invalid email address'],
+      unique: true,
+      lowercase: true,
     },
-  },
-  role: {
-    type: String,
-    default: 'customer',
-    enum: ['customer', 'vendor', 'admin'],
-  },
-  brandName: {
-    type: String,
-    required: [
-      function () {
-        return this.role === 'vendor';
+    password: {
+      type: String,
+      required: [true, 'A user must have a password'],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'A user must confirm their password'],
+      validate: {
+        validator: function (pass) {
+          return pass === this.password;
+        },
+        message: 'Passwords do not match',
       },
-      'A vendor must have a brand name',
-    ],
-    unique: true,
+    },
+    role: {
+      type: String,
+      default: 'customer',
+      enum: ['customer', 'vendor', 'admin'],
+    },
+    brandName: {
+      type: String,
+      required: [
+        function () {
+          return this.role === 'vendor';
+        },
+        'A vendor must have a brand name',
+      ],
+      unique: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+userSchema.virtual('products', {
+  ref: 'Product',
+  localField: '_id',
+  foreignField: 'vendor',
 });
 
 // ENCRYPTS PASSWORD ON CREATION OR MODIFICATION

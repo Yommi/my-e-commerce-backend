@@ -11,9 +11,13 @@ exports.createOne = (Model) => {
   });
 };
 
-exports.getOne = (Model) => {
+exports.getOne = (Model, popOptions) => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findById(req.params.id);
+    let doc = await Model.findById(req.params.id);
+
+    if (popOptions) {
+      doc = await doc.populate(popOptions);
+    }
 
     if (!doc) {
       return next(new AppError('There is no document with that id', 404));
@@ -44,12 +48,14 @@ exports.getAll = (Model) => {
 
 exports.updateOne = (Model) => {
   return catchAsync(async (req, res, next) => {
-    if (req.body.password || req.body.passwordConfirm) {
-      return next(
-        new AppError(
-          `This route cannot update passwords, use: api/v1/users/updatePassword instead`
-        )
-      );
+    if (Model === User) {
+      if (req.body.password || req.body.passwordConfirm) {
+        return next(
+          new AppError(
+            `This route cannot update passwords, use: api/v1/users/updatePassword instead`
+          )
+        );
+      }
     }
 
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
