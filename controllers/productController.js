@@ -18,3 +18,13 @@ exports.setVendorId = (req, res, next) => {
 
   next();
 };
+
+exports.myProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.find({ vendor: req.user.id });
+
+  res.status(200).json({
+    status: 'success',
+    results: products.length,
+    data: products,
+  });
+});

@@ -42,6 +42,16 @@ const userSchema = new mongoose.Schema(
       ],
       unique: true,
     },
+    cart: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Cart',
+      required: [
+        function () {
+          return this.role === 'customer';
+        },
+        'A vendor must have a brand name',
+      ],
+    },
     createdAt: {
       type: Date,
       default: Date.now(),

@@ -2,12 +2,28 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const { createAndSendtoken } = require('./../controllers/authController');
 const User = require('./../models/userModel');
+const Cart = require('./../models/cartModel');
+
+exports.filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
 
 exports.createOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
 
-    createAndSendtoken(doc, 201, res);
+    if (Model === User) {
+      createAndSendtoken(doc, 201, res);
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: doc,
+      });
+    }
   });
 };
 
@@ -15,12 +31,21 @@ exports.getOne = (Model, popOptions) => {
   return catchAsync(async (req, res, next) => {
     let doc = await Model.findById(req.params.id);
 
-    if (popOptions) {
-      doc = await doc.populate(popOptions);
+    if (Model === Cart) {
+      doc.items.forEach((obj) => {
+        if (obj.productCount < 1) {
+          doc.items = doc.items.filter((item) => item.productId !== obj.productId);
+        }
+      });
+      doc.save({ validateBeforeSave: false });
     }
 
     if (!doc) {
       return next(new AppError('There is no document with that id', 404));
+    }
+
+    if (popOptions) {
+      doc = await doc.populate(popOptions);
     }
 
     res.status(200).json({

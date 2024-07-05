@@ -18,13 +18,6 @@ exports.getOrDeleteMe = (req, res, next) => {
   next();
 };
 
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
-  return newObj;
-};
 exports.updateMe = (req, res, next) => {
   req.params.id = req.user.id;
 
@@ -36,7 +29,7 @@ exports.updateMe = (req, res, next) => {
     );
   }
 
-  const filteredBody = filterObj(req.body, 'email');
+  const filteredBody = factory.filterObj(req.body, 'email');
 
   req.body = filteredBody;
 
